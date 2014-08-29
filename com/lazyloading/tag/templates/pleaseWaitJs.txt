@@ -1,0 +1,16 @@
+<div id='pleaseWait_{lazyId}' style='width: 98%; display:block; background: transparent;' ng-class='{pleaseWait_nz:filteredResults.length != 0}' ng-class='{pleaseWait_z:filteredResults.length == 0}' class='text-center'>
+	<div ng-if='filteredResults.length == 0 && isAjaxInProgress' style='margin-left:1%'>
+		<img src='{loadingImg}' alt='loading' style='height:150px' />
+	</div>
+	<div ng-if='filteredResults.length == 0 && !isAjaxInProgress'>
+		<p class='panel'style='margin-left:1%'>No Data Found</p>	
+	</div>	
+</div>
+<style type='text/css'>
+.pleaseWait_z{
+	z-index: 100;
+}
+.pleaseWait_nz{
+	z-index: -1;
+}
+</style>

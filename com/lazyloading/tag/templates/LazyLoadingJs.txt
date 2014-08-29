@@ -1,0 +1,287 @@
+<script>
+try{
+var lazy_{lazyId} = angular.module("lazyLoading_{lazyId}",[]);
+lazy_{lazyId}.controller("LazyLoadingController", ["$scope",'$http', '$parse','$window','lazyPaginationService', function($scope, $http, $parse, $window,lazyPaginationService){
+	$scope.objects = [];
+	$scope.lazyTemplate = {};
+	$scope.lazyHeadersList = [];		
+	$scope.loadedPages = [];
+	$scope.query = {};
+	$scope.isAjaxInProgress = false;
+	$scope.pagination = lazyPaginationService.pagination;	
+	$scope.pagination.current = 1;
+	$scope.lazyIdCtrl;
+	/*$scope.lazyId = lazyPaginationService.lazyId;*/	
+	$scope.pages = lazyPaginationService.pages;
+	$scope.recordsPerPage;
+	$scope.changeRecordsPerPage={};
+	$scope.changeRecordsPerPage.option;
+	$scope.typeOptions={};		
+	this.lazyTemplateCtrl;
+	this.lazyHeadersCtrl;	
+	$scope.$watch('pagination.current', function(newValue) {			
+		if($scope.pagination.current == -1){ return; }		
+		$scope.query.searchablePageNo = ','+newValue+',';		
+		$scope.pages.array = lazyPaginationService.generatePagesArray($scope.pagination.current, $scope.pagination.lazyTotalPage, $scope.pagination.recordsPerPage, $scope.pagination.lazyPageRange);		
+		$scope.lazyPageLoad(newValue, $scope.lazyTemplate.modelClass, $scope.lazyTemplate.currentPage, $scope.pagination.recordsPerPage, $scope.lazyTemplate.formCommandName, lazyPaginationService.pagination.lazyTotalPage, $scope.lazyTemplate.requestAttr);
+	});	
+	$scope.firstIE8Load = function(){	
+		$scope.lazyPageLoad(newValue, $scope.lazyTemplate.modelClass, $scope.lazyTemplate.currentPage, $scope.pagination.recordsPerPage, $scope.lazyTemplate.formCommandName, lazyPaginationService.pagination.lazyTotalPage, $scope.lazyTemplate.requestAttr);
+	}	
+	$scope.setCurrent = function(current){	
+		if(current == undefined){
+			window.alert("Invalid Page Number.");
+			return;
+		}		
+		if($scope.isAjaxInProgress){
+			window.alert("Previous page load in progress. Please wait...");
+			return;
+		}			
+		$scope.pagination.current = current;
+		$scope.pages.array = lazyPaginationService.generatePagesArray(lazyPaginationService.pagination.current, lazyPaginationService.pagination.lazyTotalPage, lazyPaginationService.pagination.recordsPerPage, lazyPaginationService.pagination.lazyPageRange);
+	};
+	
+	$scope.$watch('lazyTemplate', function(newValue) {			
+		/*this.lazyTemplateCtrl = newValue;		
+		$scope.pagination.recordsPerPage = newValue.recordsPerPage;		
+		lazyPageLoad($scope.pagination.current, this.lazyTemplateCtrl.modelClass, this.lazyTemplateCtrl.currentPage,  this.lazyTemplateCtrl.recordsPerPage, this.lazyTemplateCtrl.formCommandName);
+		*/
+	});	
+	$scope.submitLazyForm = function(attrName, attrValue){		
+		$scope.query = {};
+		$scope.query.searchablePageNo = ',';		
+		var the_string = 'query.' + attrName;		
+		var model = $parse(the_string);  
+		model.assign($scope, attrValue);
+		$scope.$apply();
+	};
+	$scope.submitAll = function(){
+		$scope.query = {};
+		$scope.query.searchablePageNo = ',';	
+		$scope.$apply();
+	};		
+	$scope.lazyPageLoad = function(getPage, modelClass, currentPage, recordsPerPage, formCommandName, totalRecords, requestAttr){		
+		var lazyP2 = $('#lazy-table_{lazyId}').offset();			
+		if($scope.loadedPages == "" || $scope.loadedPages == undefined){
+			$scope.loadedPages = ',';
+		}		
+		$('#pleaseWait_{lazyId}').offset({ top: lazyP2.top + 60, left: lazyP2.left});
+		$('#pleaseWait_{lazyId}').height($('#lazy-table_{lazyId}').height() / 2);				
+		if(($scope.loadedPages).indexOf(","+getPage+",") == -1 && !$scope.isAjaxInProgress && $scope.pagination.lazyTotalPage > 0){			
+			$scope.isAjaxInProgress = true;
+			var request = $http({
+		         method: "post",
+		         dataType: 'json',
+		         contentType:'application/json',
+		         url: "lazyLoading.htm",
+		         /*headers: {'Content-Type': 'application/x-www-form-urlencoded'},*/
+		         data: {
+		        	 getPage: getPage,
+		        	 modelClass: modelClass,
+		        	 currentPage: currentPage,
+		        	 recordsPerPage: recordsPerPage,
+		        	 requestAttr: requestAttr
+		         }
+		     });
+			 request.success(
+		             function( data ) {
+		            	 $scope.isAjaxInProgress = false;
+		            	 $scope.pagination.current = getPage;
+		            	 $scope.loadedPages += "," +getPage + ",";
+		            	 $scope.objects.push.apply($scope.objects, data);
+		             }
+		         );
+			 request.error(function(){
+				 $scope.isAjaxInProgress = false;
+			 });			
+		};			
+	};	
+	$scope.updateRecordsPerPage = function(){		
+		if($scope.changeRecordsPerPage == -1){return;}
+		try{
+			var newPerPage = parseInt($scope.changeRecordsPerPage.option);
+		}catch(e){
+			window.alert('Invalid Selection');
+			return;
+		}		
+		var r = window.confirm("Changing Records/Page will reload the DataTable. Your work will be lost. \n Do you wish to continiue?");
+		if (r == true) {			
+			$scope.pagination.current = -1;
+			$scope.$apply();			
+			$scope.objects = [];
+			$scope.loadedPages = [];
+			$scope.pagination.recordsPerPage = newPerPage;			
+			$scope.pagination.current = 1;			
+			$scope.lazyTemplate.recordsPerPage = newPerPage;			
+			$scope.lazyTemplate.currentPage = 1;						
+			$scope.pages.array = lazyPaginationService.generatePagesArray(lazyPaginationService.pagination.current,	lazyPaginationService.pagination.lazyTotalPage, lazyPaginationService.pagination.recordsPerPage, lazyPaginationService.pagination.lazyPageRange);			
+			$scope.$apply();			
+			return;			
+		} else {		    
+		    return;
+		}	
+	};	
+}]);
+lazy_{lazyId}.factory('lazyPaginationService', [function($rootScope) {
+	var pagination = {};
+	var pages = [];	
+	var generatePagesArray = function(currentPage, collectionLength, rowsPerPage, paginationRange1) {		
+        var pages = [];
+        var totalPages = Math.ceil(collectionLength / rowsPerPage);
+     	var halfWay = Math.ceil(paginationRange1 - 2);
+        var selectedHalfWay = Math.floor(halfWay / 2);
+        var position;
+        var pageNumber;
+        var paginationRange = parseInt(paginationRange1) - 1;        
+        /*alert(currentPage + '+ '+ paginationRange + '- 1 = ' +(parseInt(currentPage) + parseInt(paginationRange) -1)  );*/
+        if((parseInt(currentPage) + parseInt(paginationRange) -1) >= totalPages){
+        	position = 'end';
+        }else {
+        	position = 'start';
+        }        
+        var i = 1;
+        for(i=0; i< paginationRange; i++){        	
+        	if(position == 'start'){
+        		if(i == halfWay){         			
+        			pages.push('...');
+        			pages.push(totalPages);
+        		}else{        			
+        			if(currentPage - selectedHalfWay > 0){        				
+        				if(i <= selectedHalfWay){
+        					pageNumber = parseInt(currentPage) + parseInt(i) - selectedHalfWay;        					
+        				}        					
+        				else {
+        					pageNumber = parseInt(currentPage) + parseInt(i) - selectedHalfWay;        					
+        				}        					
+        			}
+        			else{
+        				pageNumber = parseInt(currentPage) + parseInt(i);
+        			}        			
+        			if(pageNumber < 1) continue;
+        			pages.push(pageNumber);
+        		}        		
+        	}
+        	else{
+        		pageNumber = parseInt(totalPages) - parseInt(paginationRange) + parseInt(i) + 1;        		
+        		if(pageNumber < 1) continue;        		
+        		pages.push(pageNumber);
+        	}        	
+        }        
+        pagination.last = totalPages;
+        return pages;
+    };	
+	return {
+		pagination: pagination,
+		pages : pages,
+		generatePagesArray: generatePagesArray	
+    };  
+}]);
+lazy_{lazyId}.directive("lazyCurrentPage", ['lazyPaginationService', function(lazyPaginationService){
+	return{
+		restrict: "A",		
+		link: function(scope, element, attrs){			
+			attrs.$observe('lazyCurrentPage', function(value){				
+				lazyPaginationService.pagination.current = value;
+		      });    			
+		}	
+	};
+}]);
+lazy_{lazyId}.directive("lazyTotalPage", ['lazyPaginationService', function(lazyPaginationService){
+	return{
+		restrict: "A",		
+		link: function(scope, element, attrs){			
+			attrs.$observe('lazyTotalPage', function(value){
+				lazyPaginationService.pagination.lazyTotalPage = value;
+		      });    
+		}		
+	};	
+}]);
+lazy_{lazyId}.directive("lazyPageRange", ['lazyPaginationService', function(lazyPaginationService){
+	return{
+		restrict: "A",		
+		link: function(scope, element, attrs){			
+			attrs.$observe('lazyPageRange', function(value){
+				lazyPaginationService.pagination.lazyPageRange = value;
+		      });    
+		}		
+	};	
+}]);
+lazy_{lazyId}.directive("lazyLoadPaginate", ['lazyPaginationService', function(lazyPaginationService){	
+	return{
+		restrict: "A",				
+		link: function(scope, element, attrs){	
+			var pages = [];				
+		}		
+	};	
+}]);
+lazy_{lazyId}.filter('unique', function() {
+   return function(collection, keyname) {
+      var output = [], 
+          keys = [];
+      angular.forEach(collection, function(item) {
+      		window.alert(item[keyname]);      
+          var key = item[keyname];
+          if(keys.indexOf(key) === -1) {
+              keys.push(key);
+              output.push(item);
+          }
+      });
+      return output;
+   };
+});
+lazy_{lazyId}.directive("numbersOnly", [function(){
+return {
+    require: 'ngModel',
+    link: function(scope, element, attrs, modelCtrl) {
+      modelCtrl.$parsers.push(function (inputValue) {         
+          if (inputValue == undefined) return ''; 
+          var transformedInput = inputValue.replace(/[^0-9]/g, ''); 
+          if (transformedInput!=inputValue) {
+             modelCtrl.$setViewValue(transformedInput);
+             modelCtrl.$render();
+          }         
+          return transformedInput;         
+      });
+    }
+  };
+}]);
+lazy_{lazyId}.filter('unique', function () {
+  return function (items, filterOn) {	
+    if (filterOn === false) {
+      return items;
+    }
+    if ((filterOn || angular.isUndefined(filterOn)) && angular.isArray(items)) {
+      var hashCheck = {}, newItems = [];
+      var extractValueToCompare = function (item) {
+        if (angular.isObject(item) && angular.isString(filterOn)) {
+          return item[filterOn];
+        } else {
+          return item;
+        }
+      };
+      angular.forEach(items, function (item) {
+        var valueToCheck, isDuplicate = false;
+        for (var i = 0; i < newItems.length; i++) {
+          if (angular.equals(extractValueToCompare(newItems[i]), extractValueToCompare(item))) {
+            isDuplicate = true;
+            break;
+          }
+        }
+        if (!isDuplicate) {
+          newItems.push(item);
+        }
+      });
+      items = newItems;
+    }
+    return items;
+  };
+});
+}catch(e){}
+</script>
+<script type='text/javascript'>
+$(function(){	
+	if(angular.element('#{id}').scope() == undefined){
+		angular.bootstrap('#{id}',['lazyLoading_{lazyId}']);	
+	}
+});
+</script>

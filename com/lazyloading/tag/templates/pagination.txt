@@ -1,0 +1,22 @@
+<ul class='pagination' ng-if='1 <= pages.array.length' ng-disabled='true'>		
+<li ng-class='{ unavailable : pagination.current == 1 }'>
+<a href='' ng-click='setCurrent(1)'><<</a>
+</li>
+<li  ng-if='pagination.current > 1' class='ng-scope'>
+<a href='' ng-click='setCurrent(pagination.current - 1)' class='ng-binding'><</a>
+</li>
+<li ng-repeat='pageNumber in pages.array' ng-class='{ current : pagination.current == pageNumber, unavailable : pageNumber == "..."	 }'> 
+<a href='' ng-click='setCurrent(pageNumber)'>{{ pageNumber }}</a>
+</li>
+				
+<li  ng-if='pagination.current < pagination.last' class='ng-scope'>
+<a href='' ng-click='setCurrent(pagination.current - 1 + 2)' class='ng-binding'>></a>
+</li>
+<li  ng-class='{ unavailable : pagination.current == pagination.last }'>
+<a href='' ng-click='setCurrent(pagination.last)'>>></a>
+</li>
+</ul>
+<style type='text/css'>
+#paginate_{lazyId} a:VISITED, a:LINK{padding: 3px 5px 3px 5px;	text-decoration: none;}
+
+</style>

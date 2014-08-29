@@ -1,0 +1,44 @@
+	<script type="text/javascript">
+	$(function(){		
+	if (!Array.prototype.indexOf)
+	{
+	  Array.prototype.indexOf = function(elt /*, from*/)
+	  {
+	    var len = this.length >>> 0;
+	    var from = Number(arguments[1]) || 0;
+	    from = (from < 0)
+	         ? Math.ceil(from)
+	         : Math.floor(from);
+	    if (from < 0)
+	      from += len;
+	    for (; from < len; from++)
+	    {
+	      if (from in this &&
+	          this[from] === elt)
+	        return from;
+	    }
+	    return -1;
+	  };
+	}
+	 var browserVersion = ((/msie (\d+)/.exec(window.navigator.userAgent.toLowerCase()))|| [])[1];
+	    if(document.documentMode) {
+	        if(browserVersion != document.documentMode) {
+	            browserVersion = document.documentMode;
+	        }
+	    }	    
+	    if(parseInt(browserVersion) == 8){
+	    	$('#lazy-table_div_{lazyId}').css({'overflow':'scroll'});
+	    	$('#lazy-table_{lazyId}').css({'height':'{height}/9'});
+	    }
+	    if(parseInt(browserVersion) < 8){
+	    	$('#{id}').html('<div>' +
+	    			'Current browser does not support one or the other feature on this webpage. Please view the page in below browsers:'+
+	    				'<ul style="list-style: disc;">'+
+	    					'<li>Internet Explorer 8 or higher</li>'+
+	    					'<li>Chrome</li>'+
+	    					'<li>Mozilla</li>'+
+	    				'</ul>'+
+	    			'</div>');
+	    }	
+});
+</script>

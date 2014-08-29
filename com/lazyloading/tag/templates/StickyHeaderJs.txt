@@ -1,0 +1,26 @@
+<table id='header-fixed_{lazyId}' style='width: 99%;position: fixed; top: 0px; display:none; background-color:white;'></table>
+<script type='text/javascript'>
+$(function(){
+	var tableOffset_{lazyId} = $('#lazy-table_{lazyId}').offset().top;	
+	var $header_{lazyId} = $('#lazy-table_{lazyId} > thead').clone();
+	var $fixedHeader_{lazyId} = $('#header-fixed_{lazyId}').append($header_{lazyId});
+	var p = $('#lazy-table_{lazyId}').offset();	
+	$('#header-fixed_{lazyId}').offset({ top: p.top, left: p.left});
+	$('#header-fixed_{lazyId}').width($('#lazy-table_{lazyId}').width() - 17);	
+	$('#lazy-table_{lazyId}').bind('scroll', function() {
+	    var offset = $(this).scrollTop();	    
+	    $('#header-fixed_{lazyId} th').each(function(index){
+	        var index2 = index;
+	        $(this).width(function(index2){
+	            return $('#lazy-table_{lazyId} td').eq(index).width();
+	        });
+	    });	    
+	    if (offset >= tableOffset_{lazyId} && $fixedHeader_{lazyId}.is(':hidden')) {
+	        $fixedHeader_{lazyId}.show();
+	    }
+	    else if (offset < tableOffset_{lazyId}) {
+	        $fixedHeader_{lazyId}.hide();
+	    }
+	});
+});
+</script>

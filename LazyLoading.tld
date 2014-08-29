@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN" "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+<!-- Copyright 2014 the original author or authors. -->
+<!-- Licensed to the Apache Software Foundation (ASF) under one -->
+<!-- or more contributor license agreements.  See the NOTICE file -->
+<!-- distributed with this work for additional information -->
+<!-- regarding copyright ownership.  The ASF licenses this file -->
+<!-- to you under the Apache License, Version 2.0 (the -->
+<!-- "License"); you may not use this file except in compliance -->
+<!-- with the License.  You may obtain a copy of the License at -->
+
+<!--   http://www.apache.org/licenses/LICENSE-2.0 -->
+
+<!-- Unless required by applicable law or agreed to in writing, -->
+<!-- software distributed under the License is distributed on an -->
+<!-- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY -->
+<!-- KIND, either express or implied.  See the License for the -->
+<!-- specific language governing permissions and limitations -->
+<!-- under the License. -->
+<taglib>
+
+	<tlib-version>1.0</tlib-version>
+	<jsp-version>2.0</jsp-version>
+	<short-name>testing</short-name>
+	<uri>http://lazyloading.com/tags/ll</uri>
+
+	<tag>
+		<name>dataTable</name>
+		<tag-class>com.lazyloading.tag.LazyLoading</tag-class>
+		<description>Lazy loading data table. Use lazyObj.$index to get the $index of each records as per page</description>
+		<attribute>
+			<name>modelClass</name>
+			<required>true</required>	
+			<description>Take the fully qualified class name which implements LazyLoadingModel interface</description>							
+		</attribute>
+		
+		<attribute>
+			<name>recordsPerPage</name>
+			<required>false</required>
+			<type>java.lang.Integer</type>
+			<description>The number of records to be displayed on a sinlge page. Default size: 10 records</description>			
+		</attribute>
+		
+		<attribute>
+			<name>paginateDisplayRange</name>
+			<required>false</required>
+			<type>java.lang.Integer</type>
+			<description>Number of pages to be displayed in pagination</description>
+		</attribute>
+		<attribute>
+			<name>perPageSelection</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+			<description>comma separated values of the page selection to be give to user. By default 5,10,15</description>
+		</attribute>
+		<attribute>
+			<name>width</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+			<description>Width of the Lazy Loading div tag. Default is 50%</description>
+		</attribute>
+		<attribute>
+			<name>height</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+			<description>width of table. Specify this property with pixels to work in all browsers. Vertical browser will appear in case of overflow</description>
+		</attribute>
+		<attribute>
+			<name>stickyHeader</name>
+			<required>false</required>
+			<type>java.lang.Boolean</type>
+			<description>Specify if sticky header is needed. Default 'false'</description>
+		</attribute>
+		<attribute>
+			<name>loadingImg</name>
+			<required>true</required>
+			<type>java.lang.String</type>
+			<description>Specify the path of image which will be shown while loading data</description>
+		</attribute>
+		<attribute>
+			<name>id</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+			<description>Id of the Div container of dataTable. Make sure the uniqueness of this id in case if multiple datables are used on same page</description>
+		</attribute>
+		<attribute>
+			<name>cssStyle</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+			<description>CSS Style that will be applied to the table</description>
+		</attribute>
+		<attribute>
+			<name>cssClass</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+			<description>CSS Class that will be applied to the table</description>
+		</attribute>
+		<attribute>
+			<name>idTr</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+			<description>Id of the tr container of dataTable. Make sure the uniqueness of this id.</description>
+		</attribute>		
+		<attribute>
+			<name>cssStyleTr</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+			<description>CSS Style that will be applied to the tr</description>
+		</attribute>
+		<attribute>
+			<name>cssClassTr</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+			<description>CSS Class that will be applied to the tr</description>
+		</attribute>		
+		<attribute>
+			<name>evalExpression</name>
+			<required>false</required>
+			<description>Specify the conditioning logic adhering to the Angular JS specs. This will be applied on table rows</description>	
+		</attribute>
+		<attribute>
+			<name>requestAttr</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>The attributes that will sent back to the lazyload extending bean on every ajax request. It will be useful to filter out data while fetching from database.
+						The attributes will be passed encrypted.
+			</description>	
+			
+		</attribute>
+		
+		
+		
+	</tag>
+	<tag>
+		<name>dataColumn</name>
+		<tag-class>com.lazyloading.tag.DataColumn</tag-class>
+		
+		<attribute>
+			<name>attributeName</name>
+			<required>true</required>
+			<description>Name of the attribute in model bean. Leave this field blank if HTML tags/constants/Scripts to be used</description>	
+		</attribute>
+		<attribute>
+			<name>headerText</name>
+			<required>true</required>
+			<description>Text to be displayed on the column header</description>	
+		</attribute>
+		<attribute>
+			<name>evalExpression</name>
+			<required>false</required>
+			<description>Specify the conditioning logic adhering to the Angular JS specs. This will be applied on table tds</description>	
+		</attribute>
+		<attribute>
+			<name>id</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+			<description>Id of the tr tag container of dataTable. Make sure the uniqueness of this id. Use lazyObj.$index in conjuction to guarantee uniqueness</description>
+		</attribute>
+		<attribute>
+			<name>cssStyleTd</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+			<description>CSS Style that will be applied to the th</description>
+		</attribute>
+		<attribute>
+			<name>cssClassTd</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+			<description>CSS Class that will be applied to the th</description>
+		</attribute>
+		<attribute>
+			<name>cssClassTh</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+			<description>CSS Class that will be applied to the th</description>
+		</attribute>
+		<attribute>
+			<name>cssStyleTh</name>
+			<required>false</required>
+			<type>java.lang.String</type>
+			<description>CSS Style that will be applied to the th</description>
+		</attribute>
+		
+	</tag>
+		
+	
+	
+
+</taglib>
